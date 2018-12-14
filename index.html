@@ -1,0 +1,37 @@
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io.connect('https://localhost:8443');
+
+  var params = getParams();
+  var pageId = params.id;
+  socket.on('news', function (data) {
+    console.log(data);
+    socket.emit('impulse', { my: 'data' });
+    addDiv(data.hello);
+  });
+
+  socket.on(pageId, function(data) {
+    addDiv(data.hello);
+  });
+
+  function addDiv(message) {
+    var div = document.createElement('div');
+    div.innerHTML = message;
+    document.body.appendChild(div);
+  }
+
+  function test() {
+      socket.emit('impulse', getParams());
+  }
+
+  function getParams() {
+    return location.search.replace('?', '').split('&').reduce((col, x) => {
+        data = x.split('=');
+        col[data[0]] = data[1];
+        return col;
+    }, {});
+  }
+</script>
+<p></p>
+
+<button onclick="test()">Test</button>
